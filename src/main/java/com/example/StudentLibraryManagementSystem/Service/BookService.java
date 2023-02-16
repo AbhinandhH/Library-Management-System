@@ -28,14 +28,11 @@ public class BookService {
        /*RULE-1 Save all the attributes that programmer should set.
         only after that we have to save*/
        book.setName(bookAddDto.getName());
-       book.setIssued(false);
-       book.setGenre(bookAddDto.getGenre());
        book.setAuthor(author);
        book.setPages(bookAddDto.getPages());
-       book.setRating(bookAddDto.getRating());
        List<Book> currentBooksByAuthor = author.getBooks();
        currentBooksByAuthor.add(book);
-       author.setNo_of_books(currentBooksByAuthor.size());
+       author.setNo_of_books(author.getNo_of_books() + 1);
        authorRepository.save(author);
        /* we only need to save the Author into the database.
        Because, Author is the parent of book. Book will automatically add into the
@@ -93,24 +90,35 @@ public class BookService {
     }
 
     public String updateBookAuthorId(BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
-        Book book = bookRepository.findById(bookAuthorIdUpdateDto.getId()).get();
-        Author currentAuthor = book.getAuthor();
-        List<Book> currentAuthorBooks = currentAuthor.getBooks();
-        currentAuthorBooks.remove(book);
-        currentAuthor.setNo_of_books(currentAuthorBooks.size());
-        currentAuthor.setBooks(currentAuthorBooks);
-        Author newAuthor;
-        try {
-            newAuthor = authorRepository.findById(bookAuthorIdUpdateDto.getAuthorId()).get();
+        int bookId = bookAuthorIdUpdateDto.getId();
+        int authorId = bookAuthorIdUpdateDto.getAuthorId();
+
+        Book book;
+        try{
+            book = bookRepository.findById(bookId).get();
         }catch (Exception e){
-            return "The given Author is not found";
+            return "book is not found in the database";
         }
-        List<Book> newAuthorBooks = newAuthor.getBooks();
-        newAuthorBooks.add(book);
-        newAuthor.setBooks(newAuthorBooks);
-        newAuthor.setNo_of_books(newAuthorBooks.size());
+        Author oldAuthor = book.getAuthor();
+        Author newAuthor;
+        try{
+            newAuthor = authorRepository.findById(authorId).get();
+        }catch (Exception e){
+            return "Author not found in the database";
+        }
+
+        oldAuthor.getBooks().remove(book);
+        oldAuthor.setNo_of_books(oldAuthor.getNo_of_books() - 1);
+        newAuthor.getBooks().add(book);
+        newAuthor.setNo_of_books(newAuthor.getNo_of_books() + 1);
         book.setAuthor(newAuthor);
-        return "Author name changed from " + currentAuthor.getName() +" to "+newAuthor.getName();
+
+        authorRepository.save(oldAuthor);
+        authorRepository.save(newAuthor);
+
+        return "Author of book '"+book.getName()+"' is changed from '"+oldAuthor.getName()+"' to '"+newAuthor.getName()+"'";
+
+        //return "Author name changed from " + currentAuthor.getName() +" to "+newAuthor.getName();
     }
 
     public List<String> getTheListOfBooksOfGivenAuthor(int authorId){
@@ -132,6 +140,6 @@ public class BookService {
         author.setNo_of_books(list.size());
         bookRepository.delete(book);
         authorRepository.save(author);
-        return "Deleted book " + book.getName() + "from database";
+        return "Deleted book " + book.getName() + " from database";
     }
 }

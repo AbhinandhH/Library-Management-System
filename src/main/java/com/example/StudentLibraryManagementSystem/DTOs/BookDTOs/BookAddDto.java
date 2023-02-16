@@ -6,20 +6,11 @@ public class BookAddDto {
     private int pages;
     private double rating;
     private String name;
-    private boolean issued;
-    private int AuthorId; //Foreign key. we can pass it directly
+    private int authorId; //Foreign key. we can pass it directly
     private Genre genre;
 
     public int getPages() {
         return pages;
-    }
-
-    public boolean isIssued() {
-        return issued;
-    }
-
-    public void setIssued(boolean issued) {
-        this.issued = issued;
     }
 
     public void setPages(int pages) {
@@ -43,11 +34,11 @@ public class BookAddDto {
     }
 
     public int getAuthorId() {
-        return AuthorId;
+        return authorId;
     }
 
     public void setAuthorId(int authorId) {
-        AuthorId = authorId;
+        this.authorId = authorId;
     }
 
     public Genre getGenre() {

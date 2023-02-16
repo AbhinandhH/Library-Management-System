@@ -11,10 +11,10 @@ public class Book {
     private int id;
     private String name;
     private int pages;
-    private double rating;
-    private boolean issued;
+    private double rating = 2.0; //default value will be 2.0 in the table
+    private boolean issued =  false; //default value will be false in the table
     @Enumerated(value = EnumType.STRING)
-    private Genre genre;//default value is set in the constructor
+    private Genre genre = Genre.FICTIONAL;//default value is set in the constructor
 
     //book is the child class compared to Author.
     //Setting of foreign key will be in this class only.
@@ -31,10 +31,6 @@ public class Book {
     private Card card;
 
     public Book() {
-        this.genre = Genre.PHILOSOPHY;
-        this.rating = 5.0;
-        this.card = null;
-        this.issued = true;
     }
 
     public int getId() {

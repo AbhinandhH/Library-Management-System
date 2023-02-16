@@ -66,7 +66,7 @@ public class AuthorService {
     public String deleteAuthor(int authorId){
         Author author = authorRepository.findById(authorId).get();
         authorRepository.delete(author);
-        return "Deleted " + author.getName() + "from the database";
+        return "Deleted " + author.getName() + " from the database";
     }
 
 }

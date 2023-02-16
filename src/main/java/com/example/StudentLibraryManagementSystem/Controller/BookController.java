@@ -38,7 +38,7 @@ public class BookController {
         return bookService.updateBookGenre(bookGenreUpdateDto);
     }
 
-    @PutMapping("/update-authorid")
+    @PutMapping("/update-authorId")
     public String updateBookAuthorId(@RequestBody BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
         return bookService.updateBookAuthorId(bookAuthorIdUpdateDto);
     }
