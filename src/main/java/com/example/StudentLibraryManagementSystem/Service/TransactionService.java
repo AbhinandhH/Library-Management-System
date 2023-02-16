@@ -1,6 +1,7 @@
 package com.example.StudentLibraryManagementSystem.Service;
 
-import com.example.StudentLibraryManagementSystem.DTOs.TransactionDtos.TransactionRequestDto;
+import com.example.StudentLibraryManagementSystem.DTOs.TransactionDtos.TransactionIssueDto;
+import com.example.StudentLibraryManagementSystem.DTOs.TransactionDtos.TransactionReturnDto;
 import com.example.StudentLibraryManagementSystem.Enums.CardStatus;
 import com.example.StudentLibraryManagementSystem.Enums.TransactionStatus;
 import com.example.StudentLibraryManagementSystem.Model.Book;
@@ -12,6 +13,10 @@ import com.example.StudentLibraryManagementSystem.Repository.TransactionReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 @Service
 public class TransactionService {
     @Autowired
@@ -20,7 +25,7 @@ public class TransactionService {
     BookRepository bookRepository;
     @Autowired
     CardRepository cardRepository;
-    public String issueBook(TransactionRequestDto transactionRequestDto){
+    public String issueBook(TransactionIssueDto transactionRequestDto){
         Transaction transaction = new Transaction();
         Book book;
         try{
@@ -34,13 +39,25 @@ public class TransactionService {
         }catch (Exception e){
             return "Invalid card";
         }
-
+        List<Transaction> cardTransactionList = card.getTransactions();
+        int noOfTransactions = cardTransactionList.size();
+        Book bookHeLastTaken;
         transaction.setTransactionStatus(TransactionStatus.PENDING);
+
         //if till this time code breaks, it will register with pending status
         transaction.setCard(card);
         transaction.setBook(book);
         transaction.setIssueOperation(true);
 
+        //if he didn't return the current book he took, then he cant take another book
+        if(noOfTransactions > 0){
+            bookHeLastTaken = cardTransactionList.get(noOfTransactions - 1).getBook();
+            if(bookHeLastTaken.isIssued()){
+                transaction.setTransactionStatus(TransactionStatus.FAILED);
+                transactionRepository.save(transaction);
+                return "Already taken a book. He has to return the current book";
+            }
+        }
         if(book.isIssued()){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transactionRepository.save(transaction); // failed transactions are also saving.
@@ -61,5 +78,35 @@ public class TransactionService {
 
         cardRepository.save(card); //card is the parent of both book and transactions.
         return "Transaction successful";
+    }
+
+    public String returnBook(TransactionReturnDto transactionReturnDto){
+        Transaction returnTransaction = new Transaction();
+        returnTransaction.setIssueOperation(false);
+        Book book = bookRepository.findById(transactionReturnDto.getBookId()).get();
+        Card card = cardRepository.findById(transactionReturnDto.getCardId()).get();
+
+        List<Transaction> listOfTransactionsOfThisBook = book.getTransactions();
+        Transaction lastTransaction = listOfTransactionsOfThisBook.get(listOfTransactionsOfThisBook.size() - 1);
+
+        //checking of fine by using last transaction date details.
+        LocalDate returnDate = LocalDate.now();
+        LocalDate withoutFineDate = lastTransaction.getLastDateOfReturnWithoutFine();
+
+        if(returnDate.equals(withoutFineDate) || returnDate.isBefore(withoutFineDate)){
+            returnTransaction.setFine(0);
+        }else{
+            long days = ChronoUnit.DAYS.between(withoutFineDate, returnDate);
+            returnTransaction.setFine((int) (days * 10));
+        }
+
+        book.setIssued(false);
+        book.getTransactions().add(returnTransaction);
+        card.getTransactions().add(returnTransaction);
+        card.getBooks().remove(book);
+        card.getTransactions().add(returnTransaction);
+
+        cardRepository.save(card);
+        return "Returned the book";
     }
 }

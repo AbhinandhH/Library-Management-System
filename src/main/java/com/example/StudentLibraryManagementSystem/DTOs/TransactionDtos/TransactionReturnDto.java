@@ -1,16 +1,8 @@
 package com.example.StudentLibraryManagementSystem.DTOs.TransactionDtos;
 
-public class TransactionRequestDto {
-    private int cardId;
+public class TransactionReturnDto {
     private int bookId;
-
-    public int getCardId() {
-        return cardId;
-    }
-
-    public void setCardId(int cardId) {
-        this.cardId = cardId;
-    }
+    private int cardId;
 
     public int getBookId() {
         return bookId;
@@ -18,5 +10,13 @@ public class TransactionRequestDto {
 
     public void setBookId(int bookId) {
         this.bookId = bookId;
+    }
+
+    public int getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(int cardId) {
+        this.cardId = cardId;
     }
 }

@@ -13,13 +13,16 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "status")
     private TransactionStatus transactionStatus;
+    @Column(name = "tran.Id")
     private String transactionId = UUID.randomUUID().toString();
-    private LocalDate todayDate = LocalDate.now();
-    private LocalDate transactionTime = todayDate; //auto generate
+    @Column(name = "tran.date")
+    private LocalDate transactionTime = LocalDate.now();
+    @Column(name = "without.fine.date")
     private LocalDate lastDateOfReturnWithoutFine = transactionTime.plusDays(15); //auto
     private int fine;
-
+    @Column(name = "isIssue")
     private boolean isIssueOperation;
 
     @ManyToOne
@@ -38,14 +41,6 @@ public class Transaction {
 
     public void setBook(Book book) {
         this.book = book;
-    }
-
-    public LocalDate getTodayDate() {
-        return todayDate;
-    }
-
-    public void setTodayDate(LocalDate todayDate) {
-        this.todayDate = todayDate;
     }
 
     public void setTransactionTime(LocalDate transactionTime) {
