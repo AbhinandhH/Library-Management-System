@@ -33,6 +33,8 @@ public class Card {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Book> issuedBooks = new ArrayList<>(); // initializing the list. But, this is not mandatory. Spring boot will automatically initialize this.
 
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Transaction> transactions = new ArrayList<>();
     public Card() {
     }
 
@@ -46,6 +48,22 @@ public class Card {
 
     public Student getStudentVariableName() {
         return studentVariableName;
+    }
+
+    public List<Book> getIssuedBooks() {
+        return issuedBooks;
+    }
+
+    public void setIssuedBooks(List<Book> issuedBooks) {
+        this.issuedBooks = issuedBooks;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public void setStudentVariableName(Student studentVariableName) {

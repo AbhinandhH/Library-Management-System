@@ -3,6 +3,10 @@ package com.example.StudentLibraryManagementSystem.Model;
 import com.example.StudentLibraryManagementSystem.Enums.Genre;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -22,6 +26,8 @@ public class Book {
     @JoinColumn //Join the foreign key with this class
     private Author author;
 
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Transaction> transactions = new ArrayList<>();
 
     //Card - Book relation.
     //Card is parent of book. Because, if there is no card then there is no book can be got issued
@@ -31,6 +37,14 @@ public class Book {
     private Card card;
 
     public Book() {
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public int getId() {

@@ -92,7 +92,6 @@ public class BookService {
     public String updateBookAuthorId(BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
         int bookId = bookAuthorIdUpdateDto.getId();
         int authorId = bookAuthorIdUpdateDto.getAuthorId();
-
         Book book;
         try{
             book = bookRepository.findById(bookId).get();
@@ -106,19 +105,15 @@ public class BookService {
         }catch (Exception e){
             return "Author not found in the database";
         }
-
         oldAuthor.getBooks().remove(book);
         oldAuthor.setNo_of_books(oldAuthor.getNo_of_books() - 1);
         newAuthor.getBooks().add(book);
         newAuthor.setNo_of_books(newAuthor.getNo_of_books() + 1);
         book.setAuthor(newAuthor);
-
         authorRepository.save(oldAuthor);
         authorRepository.save(newAuthor);
-
+        //no need to save the book entity. Because of the cascading effect.
         return "Author of book '"+book.getName()+"' is changed from '"+oldAuthor.getName()+"' to '"+newAuthor.getName()+"'";
-
-        //return "Author name changed from " + currentAuthor.getName() +" to "+newAuthor.getName();
     }
 
     public List<String> getTheListOfBooksOfGivenAuthor(int authorId){
@@ -134,10 +129,8 @@ public class BookService {
     public String deleteTheGivenBook(int bookId){
         Book book = bookRepository.findById(bookId).get();
         Author author = book.getAuthor();
-        List<Book> list = author.getBooks();
-        list.remove(book);
-        author.setBooks(list);
-        author.setNo_of_books(list.size());
+        author.getBooks().remove(book);
+        author.setNo_of_books(author.getNo_of_books() - 1);
         bookRepository.delete(book);
         authorRepository.save(author);
         return "Deleted book " + book.getName() + " from database";
