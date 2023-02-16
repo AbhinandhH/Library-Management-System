@@ -59,7 +59,7 @@ public class TransactionService {
         card.getBooks().add(book);
         card.getTransactions().add(transaction);
 
-        cardRepository.save(card);
+        cardRepository.save(card); //card is the parent of both book and transactions.
         return "Transaction successful";
     }
 }
