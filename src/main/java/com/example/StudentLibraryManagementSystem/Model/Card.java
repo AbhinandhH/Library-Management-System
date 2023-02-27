@@ -27,7 +27,7 @@ public class Card {
     private Date UpdatedOn;
     @CreationTimestamp //automatic timestamping : Create timestamp when object is created
     private Date createdOn;
-    private boolean isPending = false;
+    private boolean isPending;
 
     //Student - IdCard Relation
     @OneToOne

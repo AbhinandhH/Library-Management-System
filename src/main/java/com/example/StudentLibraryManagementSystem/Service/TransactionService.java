@@ -27,6 +27,7 @@ public class TransactionService {
     CardRepository cardRepository;
     public String issueBook(TransactionIssueDto transactionRequestDto){
         Transaction transaction = new Transaction();
+        transaction.setIssueOperation(true);
         Book book;
         try{
             book = bookRepository.findById(transactionRequestDto.getBookId()).get();
@@ -40,11 +41,10 @@ public class TransactionService {
             return "card is not found";
         }
 
-        transaction.setIssueOperation(true);
+
         transaction.setBook(book);
         transaction.setCard(card);
 
-        transaction.setTransactionStatus(TransactionStatus.PENDING);
 
         if(!card.getCardStatus().equals(CardStatus.ACTIVATED)){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
@@ -73,14 +73,17 @@ public class TransactionService {
 
         book.setIssued(true);
         book.getTransactions().add(transaction);
+        book.setCard(card);
 
         cardRepository.save(card);
-
+        bookRepository.save(book);
         return "book issued successfully";
     }
 
     public String returnBook(TransactionReturnDto transactionReturnDto){
         Transaction transaction = new Transaction();
+        transaction.setIssueOperation(false);
+
         Book book;
         try{
             book = bookRepository.findById(transactionReturnDto.getBookId()).get();
@@ -94,22 +97,27 @@ public class TransactionService {
             return "invalid card";
         }
 
-        transaction.setIssueOperation(false);
         transaction.setCard(card);
         transaction.setBook(book);
 
         List<Book> booksTakenByThisCard = card.getBooks();
         Book lastTakenBook = null;
-        if(booksTakenByThisCard.size() > 0){
-            lastTakenBook = booksTakenByThisCard.get(booksTakenByThisCard.size() - 1);
-        }
 
-        if(!card.isPending() || booksTakenByThisCard.size() == 0 || lastTakenBook == null){
+
+        if(!card.isPending() || booksTakenByThisCard.size() == 0 || card.getTransactions().size() == 0){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transaction.setLastDateOfReturnWithoutFine(null);
             transactionRepository.save(transaction);
             return "Nothing to return by this card";
-        }else if(!lastTakenBook.equals(book)){
+        }
+        lastTakenBook = booksTakenByThisCard.get(booksTakenByThisCard.size() - 1);
+        if(!lastTakenBook.isIssued()){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
+            transactionRepository.save(transaction);
+            return "nothing to return by this card";
+        }
+        if(lastTakenBook.isIssued() && !lastTakenBook.equals(book)){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
             transaction.setLastDateOfReturnWithoutFine(null);
             transactionRepository.save(transaction);
@@ -117,8 +125,8 @@ public class TransactionService {
         }
 
         //fine calculation
-        List<Transaction> transactionsByThisCard = card.getTransactions();
-        Transaction lastTransaction = transactionsByThisCard.get(transactionsByThisCard.size() - 1);
+        List<Transaction> issueTransactionsByThisCard = card.getTransactions();
+        Transaction lastTransaction = issueTransactionsByThisCard.get(issueTransactionsByThisCard.size() - 1);
         LocalDate returnDate = LocalDate.now();
         LocalDate withoutFineDate = lastTransaction.getLastDateOfReturnWithoutFine();
         int fine = 0;
@@ -132,10 +140,13 @@ public class TransactionService {
         transaction.setLastDateOfReturnWithoutFine(null);
 
         card.setPending(false);
+        card.getBooks().remove(book);
 
         book.setIssued(false);
-
+        book.setCard(null);
+        transactionRepository.save(transaction);
         cardRepository.save(card);
+        bookRepository.save(book);
         return "Returned successfully";
     }
 }
