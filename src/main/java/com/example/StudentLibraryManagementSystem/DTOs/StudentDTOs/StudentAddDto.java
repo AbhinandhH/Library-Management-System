@@ -12,6 +12,9 @@ public class StudentAddDto {
     private String country;
 
     public StudentAddDto() {
+        this.age = 23;
+        this.mobNum = "2342342";
+        this.country = "INdia";
     }
 
     public String getName() {

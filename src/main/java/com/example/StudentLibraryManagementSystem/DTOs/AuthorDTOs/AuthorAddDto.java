@@ -5,6 +5,12 @@ public class AuthorAddDto {
     private int age;
     private String country;
 
+    public AuthorAddDto(){
+        this.name = "Suku";
+        this.age = 23;
+        this.country = "India";
+    }
+
     public String getName() {
         return name;
     }

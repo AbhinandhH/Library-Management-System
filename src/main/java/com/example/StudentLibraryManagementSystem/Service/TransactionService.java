@@ -30,83 +30,112 @@ public class TransactionService {
         Book book;
         try{
             book = bookRepository.findById(transactionRequestDto.getBookId()).get();
-        }catch (Exception e){
-            return "Book is not found";
+        }catch(Exception e){
+            return "book is not found";
         }
         Card card;
         try{
             card = cardRepository.findById(transactionRequestDto.getCardId()).get();
         }catch (Exception e){
-            return "Invalid card";
+            return "card is not found";
         }
-        List<Transaction> cardTransactionList = card.getTransactions();
-        int noOfTransactions = cardTransactionList.size();
-        Book bookHeLastTaken;
+
+        transaction.setIssueOperation(true);
+        transaction.setBook(book);
+        transaction.setCard(card);
+
         transaction.setTransactionStatus(TransactionStatus.PENDING);
 
-        //if till this time code breaks, it will register with pending status
-        transaction.setCard(card);
-        transaction.setBook(book);
-        transaction.setIssueOperation(true);
-
-        //if he didn't return the current book he took, then he cant take another book
-        if(noOfTransactions > 0){
-            bookHeLastTaken = cardTransactionList.get(noOfTransactions - 1).getBook();
-            if(bookHeLastTaken.isIssued()){
-                transaction.setTransactionStatus(TransactionStatus.FAILED);
-                transactionRepository.save(transaction);
-                return "Already taken a book. He has to return the current book";
-            }
+        if(!card.getCardStatus().equals(CardStatus.ACTIVATED)){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
+            transactionRepository.save(transaction);
+            return "Card is not eligible for taking books";
         }
         if(book.isIssued()){
             transaction.setTransactionStatus(TransactionStatus.FAILED);
-            transactionRepository.save(transaction); // failed transactions are also saving.
-            return "Book is not available right now";
-        }
-        if(!card.getCardStatus().equals(CardStatus.ACTIVATED)){
-            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
             transactionRepository.save(transaction);
-            return "Card is not eligible for a book issue";
+            return "book is not available right now";
+        }
+        if(card.isPending()){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
+            transactionRepository.save(transaction);
+            return "current book is not returned";
         }
 
         transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+
+        card.getTransactions().add(transaction);
+        card.getBooks().add(book);
+        card.setPending(true);
+
         book.setIssued(true);
         book.getTransactions().add(transaction);
-        book.setCard(card);
-        card.getBooks().add(book);
-        card.getTransactions().add(transaction);
 
-        cardRepository.save(card); //card is the parent of both book and transactions.
-        return "Transaction successful";
+        cardRepository.save(card);
+
+        return "book issued successfully";
     }
 
     public String returnBook(TransactionReturnDto transactionReturnDto){
-        Transaction returnTransaction = new Transaction();
-        returnTransaction.setIssueOperation(false);
-        Book book = bookRepository.findById(transactionReturnDto.getBookId()).get();
-        Card card = cardRepository.findById(transactionReturnDto.getCardId()).get();
-
-        List<Transaction> listOfTransactionsOfThisBook = book.getTransactions();
-        Transaction lastTransaction = listOfTransactionsOfThisBook.get(listOfTransactionsOfThisBook.size() - 1);
-
-        //checking of fine by using last transaction date details.
-        LocalDate returnDate = LocalDate.now();
-        LocalDate withoutFineDate = lastTransaction.getLastDateOfReturnWithoutFine();
-
-        if(returnDate.equals(withoutFineDate) || returnDate.isBefore(withoutFineDate)){
-            returnTransaction.setFine(0);
-        }else{
-            long days = ChronoUnit.DAYS.between(withoutFineDate, returnDate);
-            returnTransaction.setFine((int) (days * 10));
+        Transaction transaction = new Transaction();
+        Book book;
+        try{
+            book = bookRepository.findById(transactionReturnDto.getBookId()).get();
+        }catch (Exception e){
+            return "invalid book";
+        }
+        Card card;
+        try{
+            card = cardRepository.findById(transactionReturnDto.getCardId()).get();
+        }catch(Exception e){
+            return "invalid card";
         }
 
+        transaction.setIssueOperation(false);
+        transaction.setCard(card);
+        transaction.setBook(book);
+
+        List<Book> booksTakenByThisCard = card.getBooks();
+        Book lastTakenBook = null;
+        if(booksTakenByThisCard.size() > 0){
+            lastTakenBook = booksTakenByThisCard.get(booksTakenByThisCard.size() - 1);
+        }
+
+        if(!card.isPending() || booksTakenByThisCard.size() == 0 || lastTakenBook == null){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
+            transactionRepository.save(transaction);
+            return "Nothing to return by this card";
+        }else if(!lastTakenBook.equals(book)){
+            transaction.setTransactionStatus(TransactionStatus.FAILED);
+            transaction.setLastDateOfReturnWithoutFine(null);
+            transactionRepository.save(transaction);
+            return "returning book and taken book are different";
+        }
+
+        //fine calculation
+        List<Transaction> transactionsByThisCard = card.getTransactions();
+        Transaction lastTransaction = transactionsByThisCard.get(transactionsByThisCard.size() - 1);
+        LocalDate returnDate = LocalDate.now();
+        LocalDate withoutFineDate = lastTransaction.getLastDateOfReturnWithoutFine();
+        int fine = 0;
+        if(returnDate.isAfter(withoutFineDate)){
+            long days = ChronoUnit.DAYS.between(withoutFineDate, returnDate);
+            fine = (int) days * 10;
+        }
+
+        transaction.setFine(fine);
+        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+        transaction.setLastDateOfReturnWithoutFine(null);
+
+        card.setPending(false);
+
         book.setIssued(false);
-        book.getTransactions().add(returnTransaction);
-        card.getTransactions().add(returnTransaction);
-        card.getBooks().remove(book);
-        card.getTransactions().add(returnTransaction);
 
         cardRepository.save(card);
-        return "Returned the book";
+        return "Returned successfully";
     }
 }

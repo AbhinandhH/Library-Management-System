@@ -24,7 +24,7 @@ public class StudentService {
         student.setEmail(studentAddDto.getEmail());
         student.setPhoneNum(studentAddDto.getMobNum());
         student.setCard(card);
-        card.setStudentVariableName(student); /*setting the student in card to get
+        card.setStudent(student); /*setting the student in card to get
                                                 foreign key */
         card.setCardStatus(CardStatus.ACTIVATED); /*activating the card when the
                                                     student has been created */

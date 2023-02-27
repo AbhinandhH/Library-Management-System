@@ -9,6 +9,15 @@ public class BookAddDto {
     private int authorId; //Foreign key. we can pass it directly
     private Genre genre;
 
+
+    public BookAddDto(){
+        this.name = "janaganamana";
+        this.pages = 2323;
+        this.authorId = 1;
+        this.genre = Genre.FICTIONAL;
+        this.rating = 23;
+    }
+
     public int getPages() {
         return pages;
     }
