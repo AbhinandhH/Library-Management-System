@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
-public class AuthorAddDto {
-    private String name;
-    private int age;
+public class AuthorResponseDTO {
+    private String authorName;
     private String country;
-
+    private int noOfBooks;
+    private int age;
 }

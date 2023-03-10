@@ -6,14 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor
-public class BookAddDto {
-    private int pages;
+@AllArgsConstructor
+@Getter
+@Setter
+public class BookResponseDTO {
+    private String bookName;
+    private int noOfPages;
     private double rating;
-    private String name;
-    private int authorId;
     private Genre genre;
+    private String authorName;
+
 }

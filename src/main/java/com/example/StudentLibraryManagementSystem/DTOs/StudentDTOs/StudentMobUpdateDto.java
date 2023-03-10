@@ -1,25 +1,15 @@
 package com.example.StudentLibraryManagementSystem.DTOs.StudentDTOs;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class StudentMobUpdateDto {
     private int id;
     private String mobNum;
-
-    public StudentMobUpdateDto() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getMobNum() {
-        return mobNum;
-    }
-
-    public void setMobNum(String mobNum) {
-        this.mobNum = mobNum;
-    }
 }

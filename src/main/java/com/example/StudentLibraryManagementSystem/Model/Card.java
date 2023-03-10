@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,10 +21,8 @@ public class Card {
     private int cardId;
     @Enumerated(value = EnumType.STRING)
     private CardStatus cardStatus;
-    @UpdateTimestamp //automatic timestamping : date will get update when any update came by
-    private Date UpdatedOn;
-    @CreationTimestamp //automatic timestamping : Create timestamp when object is created
-    private Date createdOn;
+    private LocalDate UpdatedOn;
+    private LocalDate createdOn = LocalDate.now();//automatic date creation
     private boolean isPending;
 
     //Student - IdCard Relation

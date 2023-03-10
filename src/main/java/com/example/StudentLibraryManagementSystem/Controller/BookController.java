@@ -3,9 +3,12 @@ package com.example.StudentLibraryManagementSystem.Controller;
 import com.example.StudentLibraryManagementSystem.DTOs.BookDTOs.*;
 import com.example.StudentLibraryManagementSystem.Service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/book")
@@ -14,43 +17,89 @@ public class BookController {
     BookService bookService;
 
     @PostMapping("/add")
-    public String addBook(@RequestBody BookAddDto bookAddDto) {
-        return bookService.addBook(bookAddDto);
+    public ResponseEntity<String> addBook(@RequestBody BookAddDto bookAddDto) {
+        try{
+            return new ResponseEntity<>(bookService.addBook(bookAddDto), HttpStatus.ACCEPTED);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>("Author not found",HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/update-name")
-    public String updateBookName(@RequestBody BookNameUpdateDto bookNameUpdateDto) {
-        return bookService.updateBookName(bookNameUpdateDto);
+    public ResponseEntity<String> updateBookName(@RequestBody BookNameUpdateDto bookNameUpdateDto) {
+        try{
+            return new ResponseEntity<>(bookService.updateBookName(bookNameUpdateDto),HttpStatus.OK);
+        }catch(NoSuchElementException e){
+            return new ResponseEntity<>("Book is not found",HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/update-pages")
-    public String updateBookPages(@RequestBody BookPagesUpdateDto bookPagesUpdateDto) {
-        return bookService.updateBookPages(bookPagesUpdateDto);
+    public ResponseEntity<String> updateBookPages(@RequestBody BookPagesUpdateDto bookPagesUpdateDto) {
+        try{
+            return new ResponseEntity<>(bookService.updateBookPages(bookPagesUpdateDto),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>("Book is not found",HttpStatus.OK);
+        }
     }
 
     @PutMapping("/update-rating")
-    public String updateBookRating(@RequestBody BookRatingUpdateDto bookRatingUpdateDto){
-        return bookService.updateBookRating(bookRatingUpdateDto);
+    public ResponseEntity<String> updateBookRating(@RequestBody BookRatingUpdateDto bookRatingUpdateDto){
+        try{
+            return new ResponseEntity<>(bookService.updateBookRating(bookRatingUpdateDto),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>("Book is not found",HttpStatus.OK);
+        }
     }
 
     @PutMapping("/update-genre")
-    public String updateBookGenre(@RequestBody BookGenreUpdateDto bookGenreUpdateDto){
-        return bookService.updateBookGenre(bookGenreUpdateDto);
+    public ResponseEntity<String> updateBookGenre(@RequestBody BookGenreUpdateDto bookGenreUpdateDto){
+        try{
+            return new ResponseEntity<>(bookService.updateBookGenre(bookGenreUpdateDto),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>("Book is not found",HttpStatus.OK);
+        }
     }
 
     @PutMapping("/update-authorId")
-    public String updateBookAuthorId(@RequestBody BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
-        return bookService.updateBookAuthorId(bookAuthorIdUpdateDto);
+    public ResponseEntity<String> updateBookAuthorId(@RequestBody BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
+        try{
+            return new ResponseEntity<>(bookService.updateBookAuthorId(bookAuthorIdUpdateDto),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/get-books-by-author/{id}")
-    public List<String> getTheListOfBooksOfGivenAuthor(@PathVariable("id") int authorId){
-        return bookService.getTheListOfBooksOfGivenAuthor(authorId);
+    public ResponseEntity<List<String>> getTheListOfBooksOfGivenAuthor(@PathVariable("id") int authorId){
+        try{
+            return new ResponseEntity<>(bookService.getTheListOfBooksOfGivenAuthor(authorId),HttpStatus.FOUND);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>(List.of("Author not found"),HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(List.of(e.getMessage()),HttpStatus.NO_CONTENT);
+        }
     }
 
+    @GetMapping("/get-book-list")
+    public ResponseEntity<List<BookResponseDTO>> getListOfBooks(){
+        try{
+            return new ResponseEntity<>(bookService.showListOfBooks(),HttpStatus.FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        }
+    }
     @DeleteMapping("/delete-book/{id}")
-    public String deleteTheGivenBook(@PathVariable("id") int bookId){
-        return bookService.deleteTheGivenBook(bookId);
+    public ResponseEntity<String> deleteTheGivenBook(@PathVariable("id") int bookId){
+        try{
+            return new ResponseEntity<>(bookService.deleteTheGivenBook(bookId),HttpStatus.OK);
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>("Book is not found",HttpStatus.NOT_FOUND);
+        }
+    }
+    @DeleteMapping("/delete-all-books")
+    public ResponseEntity<String> deleteAllBooks(){
+       return new ResponseEntity<>(bookService.deleteAllBooks(), HttpStatus.OK);
     }
 
 }

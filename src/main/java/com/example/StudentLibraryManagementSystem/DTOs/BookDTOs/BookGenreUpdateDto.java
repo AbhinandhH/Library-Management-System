@@ -1,24 +1,16 @@
 package com.example.StudentLibraryManagementSystem.DTOs.BookDTOs;
 
 import com.example.StudentLibraryManagementSystem.Enums.Genre;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookGenreUpdateDto {
     private int id;
     private Genre genre;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
 }

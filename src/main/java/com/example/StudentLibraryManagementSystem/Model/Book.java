@@ -21,7 +21,7 @@ public class Book {
     private int id;
     private String name;
     private int pages;
-    private double rating = 2.0;
+    private double rating;
     private boolean issued =  false;
     @Enumerated(value = EnumType.STRING)
     private Genre genre = Genre.FICTIONAL;

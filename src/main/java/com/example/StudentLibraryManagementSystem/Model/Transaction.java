@@ -21,7 +21,6 @@ public class Transaction {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private TransactionStatus transactionStatus;
-//    @Column(name = "tran_Id")
     private String transactionId = UUID.randomUUID().toString();
     @Column(name = "tran_date")
     private LocalDate transactionTime = LocalDate.now();
@@ -33,10 +32,9 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn
-    private Card card; //One card can make so many transactions. from transaction perspective,
-                      // it will be ManyToOne
-    @ManyToOne      //for one book there will be many transactions. from transaction perspective,
-    @JoinColumn     //it will be ManyToOne
+    private Card card;
+    @ManyToOne
+    @JoinColumn
     private Book book;
 
 }
