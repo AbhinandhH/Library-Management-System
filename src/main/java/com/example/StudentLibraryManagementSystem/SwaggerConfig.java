@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public OpenAPI api() {
-        return new OpenAPI().info(new Info().title("Library_Management").
-                version("2.0.0").description("easy library management"));
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Library_Management")
+                        .version("2.0.0").description("easy library management")
+                );
     }
 }

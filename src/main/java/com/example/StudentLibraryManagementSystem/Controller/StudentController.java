@@ -2,6 +2,7 @@ package com.example.StudentLibraryManagementSystem.Controller;
 
 import com.example.StudentLibraryManagementSystem.DTOs.StudentDTOs.*;
 import com.example.StudentLibraryManagementSystem.Service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class StudentController {
     @Autowired
     StudentService studentService;
     @PostMapping("/add")
-    public ResponseEntity<String> addStudent(@RequestBody StudentAddDto student) {
+    public ResponseEntity<String> addStudent(@RequestBody @Valid StudentAddDto student) {
         try{
             return new ResponseEntity<>(studentService.addStudent(student), HttpStatus.ACCEPTED);
         }catch (SQLException e){
