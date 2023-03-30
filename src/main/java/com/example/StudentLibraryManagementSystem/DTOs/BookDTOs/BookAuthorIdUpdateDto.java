@@ -1,5 +1,6 @@
 package com.example.StudentLibraryManagementSystem.DTOs.BookDTOs;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,8 @@ import lombok.Setter;
 @Setter
 @Getter
 public class BookAuthorIdUpdateDto {
-    @NotNull(message = "authorId should be given")
+    @NotBlank(message = "authorId should be given")
     private int authorId;
-    private int id; //book id that we have to change the current author
+    @NotBlank(message = "bookId should not be empty")
+    private int bookId; //book id that we have to change the current author
 }

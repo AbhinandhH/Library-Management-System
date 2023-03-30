@@ -1,5 +1,6 @@
 package com.example.StudentLibraryManagementSystem.DTOs.TransactionDtos;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,8 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TransactionReturnDto {
-    @NotNull(message = "bookId should not be null")
+    @NotBlank(message = "bookId should not be blank")
     private int bookId;
-    @NotNull(message = "cardId should not be null")
+    @NotBlank(message = "cardId should not be blank")
     private int cardId;
 }

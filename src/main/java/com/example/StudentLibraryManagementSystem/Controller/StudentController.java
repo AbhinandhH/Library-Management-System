@@ -28,7 +28,7 @@ public class StudentController {
     }
 
     @PutMapping("/update-name")
-    public ResponseEntity<String> updateStudentName(@RequestBody StudentNameUpdateDto studentNameUpdateDto) {
+    public ResponseEntity<String> updateStudentName(@RequestBody @Valid StudentNameUpdateDto studentNameUpdateDto) {
         try{
             return new ResponseEntity<>(studentService.updateStudentName(studentNameUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -39,7 +39,7 @@ public class StudentController {
     }
 
     @PutMapping("/update-mobile-number")
-    public ResponseEntity<String> updateStudentMobileNumber(@RequestBody StudentMobUpdateDto studentMobUpdateDto){
+    public ResponseEntity<String> updateStudentMobileNumber(@RequestBody @Valid StudentMobUpdateDto studentMobUpdateDto){
         try{
             return new ResponseEntity<>(studentService.updateStudentMobileNumber(studentMobUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -50,7 +50,7 @@ public class StudentController {
     }
 
     @PutMapping("/update-email")
-    public ResponseEntity<String> updateStudentEmail(@RequestBody StudentEmailUpdateDto studentEmailUpdateDto){
+    public ResponseEntity<String> updateStudentEmail(@RequestBody @Valid StudentEmailUpdateDto studentEmailUpdateDto){
         try{
             return new ResponseEntity<>(studentService.updateStudentEmail(studentEmailUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -62,7 +62,7 @@ public class StudentController {
         }
     }
     @PutMapping("/update-country")
-    public ResponseEntity<String> updateStudentCountry(@RequestBody StudentCountryUpdateDto studentCountryUpdateDto){
+    public ResponseEntity<String> updateStudentCountry(@RequestBody @Valid StudentCountryUpdateDto studentCountryUpdateDto){
         try{
             return new ResponseEntity<>(studentService.updateStudentCountry(studentCountryUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -72,7 +72,7 @@ public class StudentController {
         }
     }
     @PutMapping("/update-age")
-    public ResponseEntity<String> updateStudentAge(@RequestBody StudentAgeUpdateDto studentAgeUpdateDto){
+    public ResponseEntity<String> updateStudentAge(@RequestBody @Valid StudentAgeUpdateDto studentAgeUpdateDto){
         try{
             return new ResponseEntity<>(studentService.updateStudentAge(studentAgeUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){

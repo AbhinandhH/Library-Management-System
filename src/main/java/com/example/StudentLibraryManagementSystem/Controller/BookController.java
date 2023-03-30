@@ -2,6 +2,7 @@ package com.example.StudentLibraryManagementSystem.Controller;
 
 import com.example.StudentLibraryManagementSystem.DTOs.BookDTOs.*;
 import com.example.StudentLibraryManagementSystem.Service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class BookController {
     BookService bookService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addBook(@RequestBody BookAddDto bookAddDto) {
+    public ResponseEntity<String> addBook(@RequestBody @Valid BookAddDto bookAddDto) {
         try{
             return new ResponseEntity<>(bookService.addBook(bookAddDto), HttpStatus.ACCEPTED);
         }catch (NoSuchElementException e){
@@ -27,7 +28,7 @@ public class BookController {
     }
 
     @PutMapping("/update-name")
-    public ResponseEntity<String> updateBookName(@RequestBody BookNameUpdateDto bookNameUpdateDto) {
+    public ResponseEntity<String> updateBookName(@RequestBody @Valid BookNameUpdateDto bookNameUpdateDto) {
         try{
             return new ResponseEntity<>(bookService.updateBookName(bookNameUpdateDto),HttpStatus.OK);
         }catch(NoSuchElementException e){
@@ -36,7 +37,7 @@ public class BookController {
     }
 
     @PutMapping("/update-pages")
-    public ResponseEntity<String> updateBookPages(@RequestBody BookPagesUpdateDto bookPagesUpdateDto) {
+    public ResponseEntity<String> updateBookPages(@RequestBody @Valid BookPagesUpdateDto bookPagesUpdateDto) {
         try{
             return new ResponseEntity<>(bookService.updateBookPages(bookPagesUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -45,7 +46,7 @@ public class BookController {
     }
 
     @PutMapping("/update-rating")
-    public ResponseEntity<String> updateBookRating(@RequestBody BookRatingUpdateDto bookRatingUpdateDto){
+    public ResponseEntity<String> updateBookRating(@RequestBody @Valid BookRatingUpdateDto bookRatingUpdateDto){
         try{
             return new ResponseEntity<>(bookService.updateBookRating(bookRatingUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -54,7 +55,7 @@ public class BookController {
     }
 
     @PutMapping("/update-genre")
-    public ResponseEntity<String> updateBookGenre(@RequestBody BookGenreUpdateDto bookGenreUpdateDto){
+    public ResponseEntity<String> updateBookGenre(@RequestBody @Valid BookGenreUpdateDto bookGenreUpdateDto){
         try{
             return new ResponseEntity<>(bookService.updateBookGenre(bookGenreUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){
@@ -63,7 +64,7 @@ public class BookController {
     }
 
     @PutMapping("/update-authorId")
-    public ResponseEntity<String> updateBookAuthorId(@RequestBody BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
+    public ResponseEntity<String> updateBookAuthorId(@RequestBody @Valid BookAuthorIdUpdateDto bookAuthorIdUpdateDto){
         try{
             return new ResponseEntity<>(bookService.updateBookAuthorId(bookAuthorIdUpdateDto),HttpStatus.OK);
         }catch (NoSuchElementException e){

@@ -2,6 +2,7 @@ package com.example.StudentLibraryManagementSystem.Controller;
 
 import com.example.StudentLibraryManagementSystem.DTOs.AuthorDTOs.*;
 import com.example.StudentLibraryManagementSystem.Service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,12 @@ public class AuthorController {
     @Autowired
     AuthorService authorService;
     @PostMapping("/add")
-    public ResponseEntity<String> addAuthor(@RequestBody AuthorAddDto authorAddDto){
+    public ResponseEntity<String> addAuthor(@RequestBody @Valid AuthorAddDto authorAddDto){
         return new ResponseEntity<>(authorService.addAuthor(authorAddDto), HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/update-name")
-    public ResponseEntity<String> updateAuthorName(@RequestBody AuthorNameUpdateDto authorNameUpdateDto){
+    public ResponseEntity<String> updateAuthorName(@RequestBody @Valid AuthorNameUpdateDto authorNameUpdateDto){
         try{
             return new ResponseEntity<>(authorService.updateAuthorName(authorNameUpdateDto), HttpStatus.ACCEPTED);
         }catch (NoSuchElementException e){
@@ -32,7 +33,7 @@ public class AuthorController {
     }
 
     @PutMapping("/update-country")
-    public ResponseEntity<String> updateAuthorCountry(@RequestBody AuthorCountryUpdateDto authorCountryUpdateDto){
+    public ResponseEntity<String> updateAuthorCountry(@RequestBody @Valid AuthorCountryUpdateDto authorCountryUpdateDto){
         try{
             return new ResponseEntity<>(authorService.updateAuthorCountry(authorCountryUpdateDto),HttpStatus.ACCEPTED);
         }catch (NoSuchElementException e){
@@ -43,7 +44,7 @@ public class AuthorController {
     }
 
     @PutMapping("/update-age")
-    public ResponseEntity<String> updateAuthorAge(@RequestBody AuthorAgeUpdateDto authorAgeUpdateDto){
+    public ResponseEntity<String> updateAuthorAge(@RequestBody @Valid AuthorAgeUpdateDto authorAgeUpdateDto){
         try{
             return new ResponseEntity<>(authorService.updateAuthorAge(authorAgeUpdateDto),HttpStatus.ACCEPTED);
         }catch (NoSuchElementException e){
@@ -52,7 +53,7 @@ public class AuthorController {
     }
 
     @GetMapping("/get-authors")
-    public ResponseEntity<List<AuthorResponseDTO>> getAuhtorList(){
+    public ResponseEntity<List<AuthorResponseDTO>> getAuthorList(){
         try{
             return new ResponseEntity<>(authorService.getAuthorList(), HttpStatus.FOUND);
         }catch (Exception e){
